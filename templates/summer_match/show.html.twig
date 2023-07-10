@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SummerMatch{% endblock %}
+
+{% block body %}
+    <h1>SummerMatch</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ summer_match.id }}</td>
+            </tr>
+            <tr>
+                <th>StartDate</th>
+                <td>{{ summer_match.startDate ? summer_match.startDate|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Winner ID</th>
+                <td>{{ summer_match.winner }}</td>
+            </tr>
+            <tr>
+                <th>Winner name</th>
+                {% if summer_match.winner is not null %}
+                <td>{{ team.name }}</td>
+                {% else %}
+                <td>{{ 'draw' }}</td>
+                {% endif %}
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_summer_match_index') }}">back to list</a>
+
+    <a href="{{ path('app_summer_match_edit', {'id': summer_match.id}) }}">edit</a>
+
+    {{ include('summer_match/_delete_form.html.twig') }}
+{% endblock %}

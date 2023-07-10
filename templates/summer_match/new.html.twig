@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New SummerMatch{% endblock %}
+
+{% block body %}
+    <h1>Create new SummerMatch</h1>
+
+    {{ include('summer_match/_form.html.twig') }}
+
+    <a href="{{ path('app_summer_match_index') }}">back to list</a>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SummerMatch index{% endblock %}
+
+{% block body %}
+    <h1>SummerMatch index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>StartDate</th>
+                <th>Winner</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for summer_match in summer_matches %}
+            <tr>
+                <td>{{ summer_match.id }}</td>
+                <td>{{ summer_match.startDate ? summer_match.startDate|date('Y-m-d') : '' }}</td>
+                <td>{{ summer_match.winner }}</td>
+                <td>
+                    <a href="{{ path('app_summer_match_show', {'id': summer_match.id}) }}">show</a>
+                    <a href="{{ path('app_summer_match_edit', {'id': summer_match.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_summer_match_new') }}">Create new</a>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit SummerMatch{% endblock %}
+
+{% block body %}
+    <h1>Edit SummerMatch</h1>
+
+    {{ include('summer_match/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_summer_match_index') }}">back to list</a>
+
+    {{ include('summer_match/_delete_form.html.twig') }}
+{% endblock %}
