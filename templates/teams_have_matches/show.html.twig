@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}TeamsHaveMatches{% endblock %}
+
+{% block body %}
+    <h1>TeamsHaveMatches</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ teams_have_match.id }}</td>
+            </tr>
+            <tr>
+                <th>NrPoints</th>
+                <td>{{ teams_have_match.nrPoints }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_teams_have_matches_index') }}">back to list</a>
+
+    <a href="{{ path('app_teams_have_matches_edit', {'id': teams_have_match.id}) }}">edit</a>
+
+    {{ include('teams_have_matches/_delete_form.html.twig') }}
+{% endblock %}

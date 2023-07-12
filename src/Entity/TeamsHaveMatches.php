@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\TeamsHaveMatchesRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TeamsHaveMatchesRepository::class)]
 class TeamsHaveMatches
@@ -13,6 +14,8 @@ class TeamsHaveMatches
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank]
+    #[Assert\PositiveOrZero]
     #[ORM\Column]
     private ?int $nrPoints = null;
 

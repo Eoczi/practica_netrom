@@ -4,10 +4,10 @@ namespace App\Controller;
 
 use App\Entity\SummerMatch;
 use App\Entity\Team;
+use App\Entity\TeamsHaveMatches;
 use App\Form\SummerMatchEditType;
 use App\Form\SummerMatchType;
 use App\Repository\SummerMatchRepository;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +26,7 @@ class SummerMatchController extends AbstractController
     }
 
     #[Route('/new', name: 'app_summer_match_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, SummerMatchRepository $summerMatchRepository): Response
+    public function new(Request $request, SummerMatchRepository $summerMatchRepository, EntityManagerInterface $entityManager): Response
     {
         $summerMatch = new SummerMatch();
         $form = $this->createForm(SummerMatchType::class, $summerMatch);
@@ -35,10 +35,22 @@ class SummerMatchController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $summerMatchRepository->save($summerMatch, true);
 
+            $teamsHaveMatches1 = new TeamsHaveMatches();
+            $teamsHaveMatches1->setMatchesHaveTeams($summerMatch);
+            $teamsHaveMatches1->setNrPoints(0);
+            $entityManager->persist($teamsHaveMatches1);
+            $entityManager->flush();
+
+            $teamsHaveMatches2 = new TeamsHaveMatches();
+            $teamsHaveMatches2->setMatchesHaveTeams($summerMatch);
+            $teamsHaveMatches2->setNrPoints(0);
+            $entityManager->persist($teamsHaveMatches2);
+            $entityManager->flush();
+
             return $this->redirectToRoute('app_summer_match_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('summer_match/new.html.twig', [
+        return $this->render('summer_match/new.html.twig', [
             'summer_match' => $summerMatch,
             'form' => $form,
         ]);
@@ -65,7 +77,7 @@ class SummerMatchController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_summer_match_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, SummerMatch $summerMatch, SummerMatchRepository $summerMatchRepository): Response
+    public function edit(Request $request, SummerMatch $summerMatch, SummerMatchRepository $summerMatchRepository, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(SummerMatchEditType::class, $summerMatch);
         $form->handleRequest($request);
@@ -76,7 +88,7 @@ class SummerMatchController extends AbstractController
             return $this->redirectToRoute('app_summer_match_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('summer_match/edit.html.twig', [
+        return $this->render('summer_match/edit.html.twig', [
             'summer_match' => $summerMatch,
             'form' => $form,
         ]);
@@ -91,4 +103,5 @@ class SummerMatchController extends AbstractController
 
         return $this->redirectToRoute('app_summer_match_index', [], Response::HTTP_SEE_OTHER);
     }
+
 }

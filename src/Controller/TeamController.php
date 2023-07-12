@@ -34,7 +34,7 @@ class TeamController extends AbstractController
             return $this->redirectToRoute('app_team_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('team/new.html.twig', [
+        return $this->render('team/new.html.twig', [
             'team' => $team,
             'form' => $form,
         ]);
@@ -60,7 +60,7 @@ class TeamController extends AbstractController
             return $this->redirectToRoute('app_team_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('team/edit.html.twig', [
+        return $this->render('team/edit.html.twig', [
             'team' => $team,
             'form' => $form,
         ]);

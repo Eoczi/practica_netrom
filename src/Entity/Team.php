@@ -6,6 +6,7 @@ use App\Repository\TeamRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TeamRepository::class)]
 class Team
@@ -15,9 +16,11 @@ class Team
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[Assert\NotBlank]
     #[ORM\Column]
     private ?int $nrPeople = null;
 
@@ -26,6 +29,9 @@ class Team
 
     #[ORM\OneToMany(mappedBy: 'winner', targetEntity: SummerMatch::class)]
     private Collection $summerMatches;
+
+    #[ORM\OneToOne(mappedBy: 'team', cascade: ['persist', 'remove'])]
+    private ?Ranking $ranking = null;
 
     public function __construct()
     {
@@ -125,4 +131,27 @@ class Team
     {
         return (string) $this->id;
     }
+
+    public function getRanking(): ?Ranking
+    {
+        return $this->ranking;
+    }
+
+    public function setRanking(?Ranking $ranking): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($ranking === null && $this->ranking !== null) {
+            $this->ranking->setTeam(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($ranking !== null && $ranking->getTeam() !== $this) {
+            $ranking->setTeam($this);
+        }
+
+        $this->ranking = $ranking;
+
+        return $this;
+    }
+
 }
