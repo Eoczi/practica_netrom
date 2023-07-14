@@ -21,6 +21,7 @@ class Team
     private ?string $name = null;
 
     #[Assert\NotBlank]
+    #[Assert\PositiveOrZero]
     #[ORM\Column]
     private ?int $nrPeople = null;
 

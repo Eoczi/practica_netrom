@@ -39,6 +39,10 @@ class RankingRepository extends ServiceEntityRepository
         }
     }
 
+    public function getSortedResults()
+    {
+        return $this->findBy([],['maxPoints'=>'DESC']);
+    }
 //    /**
 //     * @return Ranking[] Returns an array of Ranking objects
 //     */

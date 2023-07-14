@@ -2,9 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Ranking;
+use App\Entity\Team;
 use App\Entity\TeamsHaveMatches;
 use App\Form\TeamsHaveMatchesType;
 use App\Repository\TeamsHaveMatchesRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/teams/have/matches')]
 class TeamsHaveMatchesController extends AbstractController
 {
+
     #[Route('/', name: 'app_teams_have_matches_index', methods: ['GET'])]
     public function index(TeamsHaveMatchesRepository $teamsHaveMatchesRepository): Response
     {
@@ -48,8 +54,12 @@ class TeamsHaveMatchesController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     #[Route('/{id}/edit', name: 'app_teams_have_matches_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, TeamsHaveMatches $teamsHaveMatch, TeamsHaveMatchesRepository $teamsHaveMatchesRepository): Response
+    public function edit(Request $request, TeamsHaveMatches $teamsHaveMatch, TeamsHaveMatchesRepository $teamsHaveMatchesRepository, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(TeamsHaveMatchesType::class, $teamsHaveMatch);
         $form->handleRequest($request);
@@ -57,6 +67,7 @@ class TeamsHaveMatchesController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $teamsHaveMatchesRepository->save($teamsHaveMatch, true);
 
+            $this->updateRankings($entityManager);
             return $this->redirectToRoute('app_teams_have_matches_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -74,5 +85,41 @@ class TeamsHaveMatchesController extends AbstractController
         }
 
         return $this->redirectToRoute('app_teams_have_matches_index', [], Response::HTTP_SEE_OTHER);
+    }
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function updateRankings(EntityManagerInterface $entityManager): void
+    {
+        $teamRepository = $entityManager->getRepository(Team::class);
+        $rankingRepository = $entityManager->getRepository(Ranking::class);
+        $teams = $teamRepository->findAll();
+
+        foreach ($teams as $team) {
+            $teamID = $team->getID();
+
+            $totalPoints = $entityManager->createQueryBuilder()
+                ->select('SUM(thm.nrPoints) as totalPoints')
+                ->from('App\Entity\TeamsHaveMatches', 'thm')
+                ->where('thm.teamsHaveMatches = :teamID')
+                ->setParameter('teamID', $teamID)
+                ->getQuery()
+                ->getSingleScalarResult();
+
+            $ranking = $rankingRepository->findOneBy(['team' => $teamID]);
+
+            $finalTotalPoints = 0;
+            is_null($totalPoints) ? : $finalTotalPoints = $totalPoints;
+            if ($ranking) {
+                $ranking->setMaxPoints($finalTotalPoints);
+            } else {
+                $ranking = new Ranking();
+                $ranking->setTeam($team);
+                $ranking->setMaxPoints($finalTotalPoints);
+                $entityManager->persist($ranking);
+            }
+        }
+        $entityManager->flush();
     }
 }

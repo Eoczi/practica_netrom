@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Ranking;
 use App\Entity\SummerMatch;
 use App\Entity\Team;
 use App\Entity\TeamsHaveMatches;
@@ -81,9 +82,16 @@ class SummerMatchController extends AbstractController
     {
         $form = $this->createForm(SummerMatchEditType::class, $summerMatch);
         $form->handleRequest($request);
+        if ($summerMatch->getWinner()?->getName())
+            $oldWinner = $summerMatch->getWinner()->getName();
+        else
+            $oldWinner = '';
 
         if ($form->isSubmitted() && $form->isValid()) {
             $summerMatchRepository->save($summerMatch, true);
+            if ($summerMatch?->getWinner())
+                if ($oldWinner != $summerMatch->getWinner()->getName())
+                    $this->updatePoints($entityManager);
 
             return $this->redirectToRoute('app_summer_match_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -104,4 +112,15 @@ class SummerMatchController extends AbstractController
         return $this->redirectToRoute('app_summer_match_index', [], Response::HTTP_SEE_OTHER);
     }
 
+    public function updatePoints(EntityManagerInterface $entityManager): void
+    {
+        $summerMatchRepository = $entityManager->getRepository(SummerMatch::class);
+        $teamsHaveMatchesRepository = $entityManager->getRepository(TeamsHaveMatches::class);
+        $teams= $teamsHaveMatchesRepository->findAll();
+
+        foreach($teams as $team){
+
+        }
+
+    }
 }

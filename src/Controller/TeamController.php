@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Ranking;
 use App\Entity\Team;
 use App\Form\TeamType;
 use App\Repository\TeamRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +24,7 @@ class TeamController extends AbstractController
     }
 
     #[Route('/new', name: 'app_team_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, TeamRepository $teamRepository): Response
+    public function new(Request $request, TeamRepository $teamRepository,EntityManagerInterface $entityManager): Response
     {
         $team = new Team();
         $form = $this->createForm(TeamType::class, $team);
@@ -30,6 +32,12 @@ class TeamController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $teamRepository->save($team, true);
+
+            $ranking = new Ranking();
+            $ranking->setTeam($team);
+            $ranking->setMaxPoints(0);
+            $entityManager->persist($ranking);
+            $entityManager->flush();
 
             return $this->redirectToRoute('app_team_index', [], Response::HTTP_SEE_OTHER);
         }
