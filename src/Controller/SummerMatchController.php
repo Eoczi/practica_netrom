@@ -2,7 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Ranking;
+use App\Service\RankingService;
+use App\Service\SummerMatchService;
 use App\Entity\SummerMatch;
 use App\Entity\Team;
 use App\Entity\TeamsHaveMatches;
@@ -10,6 +11,8 @@ use App\Form\SummerMatchEditType;
 use App\Form\SummerMatchType;
 use App\Repository\SummerMatchRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,13 +41,15 @@ class SummerMatchController extends AbstractController
 
             $teamsHaveMatches1 = new TeamsHaveMatches();
             $teamsHaveMatches1->setMatchesHaveTeams($summerMatch);
-            $teamsHaveMatches1->setNrPoints(0);
+            $teamsHaveMatches1->setNrPoints(1);
+            $teamsHaveMatches1->setTeamsHaveMatches(null);
             $entityManager->persist($teamsHaveMatches1);
             $entityManager->flush();
 
             $teamsHaveMatches2 = new TeamsHaveMatches();
             $teamsHaveMatches2->setMatchesHaveTeams($summerMatch);
-            $teamsHaveMatches2->setNrPoints(0);
+            $teamsHaveMatches2->setNrPoints(1);
+            $teamsHaveMatches2->setTeamsHaveMatches(null);
             $entityManager->persist($teamsHaveMatches2);
             $entityManager->flush();
 
@@ -77,21 +82,29 @@ class SummerMatchController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     #[Route('/{id}/edit', name: 'app_summer_match_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, SummerMatch $summerMatch, SummerMatchRepository $summerMatchRepository, EntityManagerInterface $entityManager): Response
     {
+        $rankingService = new RankingService();
+        $summerMatchService = new SummerMatchService();
         $form = $this->createForm(SummerMatchEditType::class, $summerMatch);
         $form->handleRequest($request);
-        if ($summerMatch->getWinner()?->getName())
+        /*if ($summerMatch->getWinner()?->getName())
             $oldWinner = $summerMatch->getWinner()->getName();
         else
-            $oldWinner = '';
+            $oldWinner = '';*/
 
         if ($form->isSubmitted() && $form->isValid()) {
             $summerMatchRepository->save($summerMatch, true);
-            if ($summerMatch?->getWinner())
-                if ($oldWinner != $summerMatch->getWinner()->getName())
-                    $this->updatePoints($entityManager);
+            /*$newSummerMatch = $summerMatchRepository->findOneBy(['id' => $summerMatch->getId()]);
+            $newWinner = $newSummerMatch->getWinner()->getName();*/
+            $rankingService->updateRankings($entityManager);
+            $summerMatchService->updatePoints($entityManager,$summerMatch);
+
 
             return $this->redirectToRoute('app_summer_match_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -112,15 +125,4 @@ class SummerMatchController extends AbstractController
         return $this->redirectToRoute('app_summer_match_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    public function updatePoints(EntityManagerInterface $entityManager): void
-    {
-        $summerMatchRepository = $entityManager->getRepository(SummerMatch::class);
-        $teamsHaveMatchesRepository = $entityManager->getRepository(TeamsHaveMatches::class);
-        $teams= $teamsHaveMatchesRepository->findAll();
-
-        foreach($teams as $team){
-
-        }
-
-    }
 }

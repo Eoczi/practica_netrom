@@ -16,6 +16,11 @@ class TeamsHaveMatches
 
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
+    #[Assert\AtLeastOneOf([
+        new Assert\EqualTo(3),
+        new Assert\EqualTo(1),
+        new Assert\EqualTo(0),
+    ])]
     #[ORM\Column]
     private ?int $nrPoints = null;
 

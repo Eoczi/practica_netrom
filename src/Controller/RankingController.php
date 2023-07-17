@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Ranking;
 use App\Entity\Team;
+use App\Form\RankingEditType;
 use App\Form\RankingType;
 use App\Repository\RankingRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,7 +26,7 @@ class RankingController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_ranking_new', methods: ['GET', 'POST'])]
+    /*#[Route('/new', name: 'app_ranking_new', methods: ['GET', 'POST'])]
     public function new(Request $request, RankingRepository $rankingRepository): Response
     {
         $ranking = new Ranking();
@@ -38,24 +39,24 @@ class RankingController extends AbstractController
             return $this->redirectToRoute('app_ranking_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('ranking/new.html.twig', [
+        return $this->render('ranking/new.html.twig', [
             'ranking' => $ranking,
             'form' => $form,
         ]);
-    }
+    }*/
 
-    #[Route('/{id}', name: 'app_ranking_show', methods: ['GET'])]
+    /*#[Route('/{id}', name: 'app_ranking_show', methods: ['GET'])]
     public function show(Ranking $ranking): Response
     {
         return $this->render('ranking/show.html.twig', [
             'ranking' => $ranking,
         ]);
-    }
+    }*/
 
-    #[Route('/{id}/edit', name: 'app_ranking_edit', methods: ['GET', 'POST'])]
+    /*#[Route('/{id}/edit', name: 'app_ranking_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Ranking $ranking, RankingRepository $rankingRepository): Response
     {
-        $form = $this->createForm(RankingType::class, $ranking);
+        $form = $this->createForm(RankingEditType::class, $ranking);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -64,13 +65,13 @@ class RankingController extends AbstractController
             return $this->redirectToRoute('app_ranking_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('ranking/edit.html.twig', [
+        return $this->render('ranking/edit.html.twig', [
             'ranking' => $ranking,
             'form' => $form,
         ]);
-    }
+    }*/
 
-    #[Route('/{id}', name: 'app_ranking_delete', methods: ['POST'])]
+    /*#[Route('/{id}', name: 'app_ranking_delete', methods: ['POST'])]
     public function delete(Request $request, Ranking $ranking, RankingRepository $rankingRepository): Response
     {
         if ($this->isCsrfTokenValid('delete'.$ranking->getId(), $request->request->get('_token'))) {
@@ -78,5 +79,5 @@ class RankingController extends AbstractController
         }
 
         return $this->redirectToRoute('app_ranking_index', [], Response::HTTP_SEE_OTHER);
-    }
+    }*/
 }

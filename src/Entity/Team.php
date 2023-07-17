@@ -17,11 +17,19 @@ class Team
     private ?int $id = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 2,
+        max: 25,
+        minMessage: 'Your first name must be at least {{ limit }} characters long',
+        maxMessage: 'Your first name cannot be longer than {{ limit }} characters',
+    )]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
+    #[Assert\GreaterThan(0)]
+    #[Assert\LessThan(100)]
     #[ORM\Column]
     private ?int $nrPeople = null;
 

@@ -2,11 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\Ranking;
-use App\Entity\Team;
 use App\Entity\TeamsHaveMatches;
 use App\Form\TeamsHaveMatchesType;
 use App\Repository\TeamsHaveMatchesRepository;
+use App\Service\RankingService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -61,13 +60,14 @@ class TeamsHaveMatchesController extends AbstractController
     #[Route('/{id}/edit', name: 'app_teams_have_matches_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, TeamsHaveMatches $teamsHaveMatch, TeamsHaveMatchesRepository $teamsHaveMatchesRepository, EntityManagerInterface $entityManager): Response
     {
+        $rankingService = new RankingService();
         $form = $this->createForm(TeamsHaveMatchesType::class, $teamsHaveMatch);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $teamsHaveMatchesRepository->save($teamsHaveMatch, true);
 
-            $this->updateRankings($entityManager);
+            $rankingService->updateRankings($entityManager);
             return $this->redirectToRoute('app_teams_have_matches_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -86,40 +86,6 @@ class TeamsHaveMatchesController extends AbstractController
 
         return $this->redirectToRoute('app_teams_have_matches_index', [], Response::HTTP_SEE_OTHER);
     }
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
-    public function updateRankings(EntityManagerInterface $entityManager): void
-    {
-        $teamRepository = $entityManager->getRepository(Team::class);
-        $rankingRepository = $entityManager->getRepository(Ranking::class);
-        $teams = $teamRepository->findAll();
 
-        foreach ($teams as $team) {
-            $teamID = $team->getID();
 
-            $totalPoints = $entityManager->createQueryBuilder()
-                ->select('SUM(thm.nrPoints) as totalPoints')
-                ->from('App\Entity\TeamsHaveMatches', 'thm')
-                ->where('thm.teamsHaveMatches = :teamID')
-                ->setParameter('teamID', $teamID)
-                ->getQuery()
-                ->getSingleScalarResult();
-
-            $ranking = $rankingRepository->findOneBy(['team' => $teamID]);
-
-            $finalTotalPoints = 0;
-            is_null($totalPoints) ? : $finalTotalPoints = $totalPoints;
-            if ($ranking) {
-                $ranking->setMaxPoints($finalTotalPoints);
-            } else {
-                $ranking = new Ranking();
-                $ranking->setTeam($team);
-                $ranking->setMaxPoints($finalTotalPoints);
-                $entityManager->persist($ranking);
-            }
-        }
-        $entityManager->flush();
-    }
 }

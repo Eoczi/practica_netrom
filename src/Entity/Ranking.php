@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\RankingRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RankingRepository::class)]
@@ -14,6 +15,7 @@ class Ranking
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Assert\PositiveOrZero]
     private ?int $maxPoints = null;
 
     #[ORM\OneToOne(inversedBy: 'ranking', cascade: ['persist', 'remove'])]

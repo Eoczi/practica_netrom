@@ -21,7 +21,7 @@
                 <td>{{ teams_have_match.id }}</td>
                 <td>{{ teams_have_match.nrPoints }}</td>
                 <td>{{ teams_have_match.matchesHaveTeams.id }}</td>
-                {% if teams_have_match.teamsHaveMatches.name is not null %}
+                {% if teams_have_match.teamsHaveMatches is not null %}
                     <td>{{ teams_have_match.teamsHaveMatches.name }}</td>
                 {% else %}
                     <td>PUT TEAM HERE</td>
