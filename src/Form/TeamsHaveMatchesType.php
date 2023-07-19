@@ -18,6 +18,7 @@ class TeamsHaveMatchesType extends AbstractType
             ->add('teamsHaveMatches', EntityType::class, [
                 'class' => Team::class,
                 'choice_label' => 'name',])
+            ->add('goals')
             #->add('matchesHaveTeams')
         ;
     }

@@ -19,10 +19,11 @@ class TeamsHaveMatchesController extends AbstractController
 {
 
     #[Route('/', name: 'app_teams_have_matches_index', methods: ['GET'])]
-    public function index(TeamsHaveMatchesRepository $teamsHaveMatchesRepository): Response
+    public function index(TeamsHaveMatchesRepository $teamsHaveMatchesRepository, EntityManagerInterface $entityManager): Response
     {
+        $allGroupMatches = $teamsHaveMatchesRepository->findAllGroupMatches($entityManager);
         return $this->render('teams_have_matches/index.html.twig', [
-            'teams_have_matches' => $teamsHaveMatchesRepository->findAll(),
+            'teams_have_matches' => $allGroupMatches,
         ]);
     }
 

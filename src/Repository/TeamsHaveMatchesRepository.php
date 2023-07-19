@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Team;
 use App\Entity\TeamsHaveMatches;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -39,28 +41,18 @@ class TeamsHaveMatchesRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return TeamsHaveMatches[] Returns an array of TeamsHaveMatches objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findAllGroupMatches (EntityManagerInterface $entityManager) :array
+    {
+        return $entityManager->createQueryBuilder()
+            ->select('GROUP_CONCAT(thm.id) as IDs')
+            ->addSelect(' GROUP_CONCAT(thm.goals) AS Score')
+            ->addSelect(' GROUP_CONCAT(thm.nrPoints) AS Points')
+            ->addSelect(' GROUP_CONCAT(t.name) AS Teams')
+            ->from('App\Entity\TeamsHaveMatches', 'thm')
+            ->innerJoin(Team::class,'t','WITH','t.id = thm.teamsHaveMatches ')
+            ->groupBy('thm.matchesHaveTeams')
+            ->getQuery()
+            ->getResult();
+    }
 
-//    public function findOneBySomeField($value): ?TeamsHaveMatches
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

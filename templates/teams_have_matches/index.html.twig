@@ -9,8 +9,7 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>NrPoints</th>
-                <th>MatchID</th>
+                <th>Score</th>
                 <th>TeamsNames</th>
                 <th>actions</th>
             </tr>
@@ -18,18 +17,16 @@
         <tbody>
         {% for teams_have_match in teams_have_matches %}
             <tr>
-                <td>{{ teams_have_match.id }}</td>
-                <td>{{ teams_have_match.nrPoints }}</td>
-                <td>{{ teams_have_match.matchesHaveTeams.id }}</td>
-                {% if teams_have_match.teamsHaveMatches is not null %}
-                    <td>{{ teams_have_match.teamsHaveMatches.name }}</td>
-                {% else %}
-                    <td>PUT TEAM HERE</td>
-                {% endif %}
-                <td>
-                    <a href="{{ path('app_teams_have_matches_show', {'id': teams_have_match.id}) }}">show</a>
-                    <a href="{{ path('app_teams_have_matches_edit', {'id': teams_have_match.id}) }}">edit</a>
-                </td>
+                <td>{{ teams_have_match.IDs }}</td>
+                <td>{{ teams_have_match.Score|split(',')|join('-') }}</td>
+                <td>{{ teams_have_match.Teams }}</td>
+                {% set teamIDs = teams_have_match.IDs|split(',') %}
+                {% for teamID in teamIDs %}
+                    <td>
+                        <a href="{{ path('app_teams_have_matches_edit', {'id': teamID }) }}">edit </a>
+                    </td>
+                {% endfor %}
+
             </tr>
         {% else %}
             <tr>
@@ -39,5 +36,4 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_teams_have_matches_new') }}">Create new</a>
 {% endblock %}

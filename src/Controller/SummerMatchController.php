@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\TeamRepository;
 use App\Service\RankingService;
 use App\Service\SummerMatchService;
 use App\Entity\SummerMatch;
@@ -29,8 +30,12 @@ class SummerMatchController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     #[Route('/new', name: 'app_summer_match_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, SummerMatchRepository $summerMatchRepository, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, SummerMatchRepository $summerMatchRepository, TeamRepository $teamRepository, EntityManagerInterface $entityManager): Response
     {
         $summerMatch = new SummerMatch();
         $form = $this->createForm(SummerMatchType::class, $summerMatch);
@@ -42,14 +47,24 @@ class SummerMatchController extends AbstractController
             $teamsHaveMatches1 = new TeamsHaveMatches();
             $teamsHaveMatches1->setMatchesHaveTeams($summerMatch);
             $teamsHaveMatches1->setNrPoints(1);
-            $teamsHaveMatches1->setTeamsHaveMatches(null);
+            $teamsHaveMatches1->setGoals(0);
+            $firstTeam = $teamRepository->findOneBy([], ['id' => 'ASC']);
+            if ($firstTeam)
+                $teamsHaveMatches1->setTeamsHaveMatches($firstTeam);
+            else
+                $teamsHaveMatches1->setTeamsHaveMatches(null);
             $entityManager->persist($teamsHaveMatches1);
             $entityManager->flush();
 
             $teamsHaveMatches2 = new TeamsHaveMatches();
             $teamsHaveMatches2->setMatchesHaveTeams($summerMatch);
             $teamsHaveMatches2->setNrPoints(1);
-            $teamsHaveMatches2->setTeamsHaveMatches(null);
+            $teamsHaveMatches2->setGoals(0);
+            $lastTeam = $teamRepository->findOneBy([], ['id' => 'DESC']);
+            if ($lastTeam)
+                $teamsHaveMatches2->setTeamsHaveMatches($lastTeam);
+            else
+                $teamsHaveMatches2->setTeamsHaveMatches(null);
             $entityManager->persist($teamsHaveMatches2);
             $entityManager->flush();
 

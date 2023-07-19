@@ -30,6 +30,10 @@ class TeamsHaveMatches
     #[ORM\ManyToOne(inversedBy: 'teamsHaveMatches')]
     private ?SummerMatch $matchesHaveTeams = null;
 
+    #[Assert\PositiveOrZero]
+    #[ORM\Column(nullable: true)]
+    private ?int $goals = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -70,4 +74,17 @@ class TeamsHaveMatches
 
         return $this;
     }
+
+    public function getGoals(): ?int
+    {
+        return $this->goals;
+    }
+
+    public function setGoals(?int $goals): static
+    {
+        $this->goals = $goals;
+
+        return $this;
+    }
+
 }
