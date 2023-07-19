@@ -30,10 +30,6 @@ class SummerMatchController extends AbstractController
         ]);
     }
 
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
     #[Route('/new', name: 'app_summer_match_new', methods: ['GET', 'POST'])]
     public function new(Request $request, SummerMatchRepository $summerMatchRepository, TeamRepository $teamRepository, EntityManagerInterface $entityManager): Response
     {

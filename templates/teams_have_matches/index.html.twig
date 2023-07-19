@@ -2,6 +2,11 @@
 
 {% block title %}TeamsHaveMatches index{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+{% endblock %}
+
 {% block body %}
     <h1>TeamsHaveMatches index</h1>
 
