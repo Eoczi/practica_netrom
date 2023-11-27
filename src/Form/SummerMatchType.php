@@ -11,7 +11,9 @@ class SummerMatchType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('startDate')
+            ->add('startDate', null, [
+                'label' => 'Data in care este sustinut meciul: '
+            ])
 
         ;
     }

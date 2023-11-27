@@ -1,44 +1,51 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}TeamsHaveMatches index{% endblock %}
+{% block title %}Match results{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tables.css') }}">
 {% endblock %}
 
 {% block body %}
-    <h1>TeamsHaveMatches index</h1>
+    <div class ="centered-div">
+        <h1>TeamsHaveMatches index</h1>
 
-    <table class="table">
-        <thead>
+        <table class="content-table">
+            <thead>
             <tr>
-                <th>Id</th>
+                <th>Action1</th>
+                <th>Team1</th>
                 <th>Score</th>
-                <th>TeamsNames</th>
-                <th>actions</th>
+                <th>Team2</th>
+                <th>Action2</th>
             </tr>
-        </thead>
-        <tbody>
-        {% for teams_have_match in teams_have_matches %}
-            <tr>
-                <td>{{ teams_have_match.IDs }}</td>
-                <td>{{ teams_have_match.Score|split(',')|join('-') }}</td>
-                <td>{{ teams_have_match.Teams }}</td>
-                {% set teamIDs = teams_have_match.IDs|split(',') %}
-                {% for teamID in teamIDs %}
+            </thead>
+            <tbody>
+            {% for teams_have_match in teams_have_matches %}
+                <tr>
+                    {% set teamTeams = teams_have_match.Teams|split(',') %}
+                    {% set teamIDs = teams_have_match.IDs|split(',') %}
                     <td>
-                        <a href="{{ path('app_teams_have_matches_edit', {'id': teamID }) }}">edit </a>
+                        <a href="{{ path('app_teams_have_matches_edit', {'id': teamIDs[0] }) }}">
+                            edit
+                        </a>
                     </td>
-                {% endfor %}
-
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
+                    <td>{{ teamTeams[0] }}</td>
+                    <td>{{ teams_have_match.Score|split(',')|join('-') }}</td>
+                    <td>{{ teamTeams[1] }}</td>
+                    <td>
+                        <a href="{{ path('app_teams_have_matches_edit', {'id': teamIDs[1] }) }}">
+                            edit
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

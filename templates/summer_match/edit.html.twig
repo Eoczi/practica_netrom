@@ -3,11 +3,17 @@
 {% block title %}Edit SummerMatch{% endblock %}
 
 {% block body %}
-    <h1>Edit SummerMatch</h1>
+    <div class="centered-div">
+        <h1>
+            Selected match is placed at the date
+            {{ summer_match.startDate ? summer_match.startDate|date('Y-m-d') : '' }}
+            between
+        </h1>
 
-    {{ include('summer_match/_form.html.twig', {'button_label': 'Update'}) }}
+        {{ include('summer_match/_form.html.twig', {'button_label': 'Update'}) }}
 
-    <a href="{{ path('app_summer_match_index') }}">back to list</a>
+        <a href="{{ path('app_summer_match_index') }}">back to list</a>
 
-    {{ include('summer_match/_delete_form.html.twig') }}
+        {{ include('summer_match/_delete_form.html.twig') }}
+    </div>
 {% endblock %}

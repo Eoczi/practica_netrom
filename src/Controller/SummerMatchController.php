@@ -73,26 +73,6 @@ class SummerMatchController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_summer_match_show', methods: ['GET'])]
-    public function show(SummerMatch $summerMatch,EntityManagerInterface $entityManager): Response
-    {
-        try {
-            $teamRepository = $entityManager->getRepository(Team::class);
-            if ($summerMatch->getWinner() != null)
-                $team = $teamRepository->find($summerMatch->getWinner());
-            else
-                $team = $teamRepository->findAll();
-        }
-        catch(\Exception $exception){
-            dd($exception->getMessage());
-        }
-
-        return $this->render('summer_match/show.html.twig', [
-            'summer_match' => $summerMatch,
-            'team' => $team,
-        ]);
-    }
-
     /**
      * @throws NonUniqueResultException
      * @throws NoResultException

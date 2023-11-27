@@ -4,33 +4,36 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tables.css') }}">
 {% endblock %}
 
 {% block body %}
-    <h1>Ranking index</h1>
+    <div class="centered-div">
+        <h1>Current placements</h1>
 
-    <table class="table">
-        <thead>
+        <table class="content-table">
+            <thead>
             <tr>
-                <th>Id</th>
+                <th>Placement</th>
                 <th>TeamName</th>
                 <th>MaxPoints</th>
             </tr>
-        </thead>
-        <tbody>
-        {% for ranking in rankings %}
-            <tr>
-                <td>{{ ranking.id }}</td>
-                <td>{{ ranking.team.name }}</td>
-                <td>{{ ranking.maxPoints }}</td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for ranking in rankings %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ ranking.team.name }}</td>
+                    <td>{{ ranking.maxPoints }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
 
 {% endblock %}

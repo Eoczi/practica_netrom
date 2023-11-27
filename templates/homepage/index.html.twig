@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/buttons.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="centered-div">
+        <h1>Main menu</h1>
+        <div class="button-container">
+            <button id="showCompetition" class="rounded-button">Current Competition</button>
+            <div id="hiddenButtons" class="hidden">
+                <a href="/ranking" class="rounded-button">Ranking</a>
+                <a href="/team" class="rounded-button">Teams</a>
+                <a href="/summer/match" class="rounded-button">Set match</a>
+                <a href="/teams/have/matches/" class="rounded-button">Matches</a>
+            </div>
+            <button class="rounded-button">Reset Competition</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('showCompetition').addEventListener('click', function () {
+            document.getElementById('hiddenButtons').classList.remove('hidden');
+        });
+    </script>
+{% endblock %}

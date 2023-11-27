@@ -20,7 +20,7 @@ class SummerMatch
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $startDate = null;
 
-    #[ORM\OneToMany(mappedBy: 'matchesHaveTeams', targetEntity: TeamsHaveMatches::class)]
+    #[ORM\OneToMany(mappedBy: 'matchesHaveTeams', targetEntity: TeamsHaveMatches::class, cascade: ['persist', 'remove'])]
     private Collection $teamsHaveMatches;
 
     #[ORM\ManyToOne(inversedBy: 'summerMatches')]

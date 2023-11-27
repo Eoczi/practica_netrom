@@ -1,42 +1,48 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}SummerMatch index{% endblock %}
+{% block title %}Match data{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tables.css') }}">
 {% endblock %}
 
 {% block body %}
-    <h1>SummerMatch index</h1>
+    <div class="centered-div">
+        <h1>SummerMatch index</h1>
 
-    <table class="table">
-        <thead>
+        <table class="content-table">
+            <thead>
             <tr>
                 <th>Id</th>
                 <th>StartDate</th>
                 <th>Winner</th>
-                <th>actions</th>
+                <th>Actions</th>
             </tr>
-        </thead>
-        <tbody>
-        {% for summer_match in summer_matches %}
-            <tr>
-                <td>{{ summer_match.id }}</td>
-                <td>{{ summer_match.startDate ? summer_match.startDate|date('Y-m-d') : '' }}</td>
-                <td>{{ summer_match.winner }}</td>
-                <td>
-                    <a href="{{ path('app_summer_match_show', {'id': summer_match.id}) }}">show</a>
-                    <a href="{{ path('app_summer_match_edit', {'id': summer_match.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for summer_match in summer_matches %}
+                <tr>
+                    <td>{{ summer_match.id }}</td>
+                    <td>{{ summer_match.startDate ? summer_match.startDate|date('Y-m-d') : '' }}</td>
+                    {% if summer_match.winner %}
+                        <td>{{ summer_match.winner.name}}</td>
+                    {% else %}
+                        <td>ONGOING!!!</td>
+                    {% endif %}
+                    <td>
+                        <a href="{{ path('app_summer_match_edit', {'id': summer_match.id}) }}">edit</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
 
-    <a href="{{ path('app_summer_match_new') }}">Create new</a>
+        <a href="{{ path('app_summer_match_new') }}">Create new</a>
+    </div>
+
 {% endblock %}

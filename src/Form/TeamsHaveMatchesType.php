@@ -14,12 +14,15 @@ class TeamsHaveMatchesType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nrPoints')
+            //->add('nrPoints')
             ->add('teamsHaveMatches', EntityType::class, [
+                'label' => 'Alege echipa',
                 'class' => Team::class,
                 'choice_label' => 'name',])
-            ->add('goals')
-            #->add('matchesHaveTeams')
+            ->add('goals', null, [
+                'label' => 'Numarul de goluri a echipei'
+            ])
+            //->add('matchesHaveTeams')
         ;
     }
 
