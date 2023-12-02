@@ -5,14 +5,40 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
         {% block stylesheets %}
-            <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
         {% endblock %}
 
         {% block javascripts %}
         {% endblock %}
     </head>
     <body>
-
-        {% block body %}{% endblock %}
+        <nav class="nav">
+            <label class="logo"><a href="/">MyApp</a></label>
+            <ul class="nav-links">
+                <li><a>New competition</a></li>
+                <li><a href="/ranking">Ranking</a></li>
+                <li><a href="/summer/match">Match dates</a></li>
+                <li><a href="/team">Teams</a></li>
+                <li><a href="/teams/have/matches">Matches</a></li>
+            </ul>
+        </nav>
+        {% block body %}
+            <div class="content-container">
+                <div class="content">
+                    <h1>Hello</h1>
+                    <h5>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
+                        ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+                        voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+                        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                    </h5>
+                </div>
+                <div class="content">
+                    <h1>Hellooooo</h1>
+                </div>
+            </div>
+        {% endblock %}
     </body>
 </html>
