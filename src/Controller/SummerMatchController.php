@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/summer/match')]
+#[Route('/match/date')]
 class SummerMatchController extends AbstractController
 {
     #[Route('/', name: 'app_summer_match_index', methods: ['GET'])]
@@ -115,5 +115,4 @@ class SummerMatchController extends AbstractController
 
         return $this->redirectToRoute('app_summer_match_index', [], Response::HTTP_SEE_OTHER);
     }
-
 }
