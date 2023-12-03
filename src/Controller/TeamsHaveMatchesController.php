@@ -14,10 +14,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/teams/have/matches')]
+#[Route('/matches')]
 class TeamsHaveMatchesController extends AbstractController
 {
-
     #[Route('/', name: 'app_teams_have_matches_index', methods: ['GET'])]
     public function index(TeamsHaveMatchesRepository $teamsHaveMatchesRepository, EntityManagerInterface $entityManager): Response
     {
@@ -87,6 +86,4 @@ class TeamsHaveMatchesController extends AbstractController
 
         return $this->redirectToRoute('app_teams_have_matches_index', [], Response::HTTP_SEE_OTHER);
     }
-
-
 }

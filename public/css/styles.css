@@ -6,7 +6,7 @@
 }
 
 body {
-    font-family: "Bodoni MT", serif;
+    font-family: 'Fira Sans', sans-serif;
 }
 
 .centered-div {
@@ -59,13 +59,28 @@ label.logo a{
 }
 
 .content-container {
+    padding: 50px;
     display: flex;
     align-items: center;
     flex-direction: row;
+    height: calc(100vh - 100px);
     flex: 1;
 }
 
 .content {
     flex: 1;
-    padding: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 50px;
+    height: 100%;
+    overflow: hidden;
+}
+
+.content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
 }
