@@ -2,10 +2,18 @@
 
 {% block title %}New SummerMatch{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/buttons.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/edit_form.css') }}">
+{% endblock %}
+
 {% block body %}
-    <h1>Create new SummerMatch</h1>
+    <div class="content">
+        <h1>Create new SummerMatch</h1>
 
-    {{ include('summer_match/_form.html.twig') }}
+        {{ include('summer_match/_form.html.twig') }}
 
-    <a href="{{ path('app_summer_match_index') }}">back to list</a>
+        <a class="rounded-button" href="{{ path('app_summer_match_index') }}">Back</a>
+    </div>
 {% endblock %}

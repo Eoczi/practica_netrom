@@ -1,6 +1,4 @@
-/* Edit Form Styles */
 
-/* Form container */
 .edit-form {
     max-width: 500px;
     margin: 0 auto;
@@ -9,14 +7,8 @@
     border: 1px solid #ccc;
 }
 
-/* Form header */
-.edit-form h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-}
-
-/* Form input fields */
 .edit-form input[type="text"],
+.edit-form input[type="number"],
 .edit-form textarea {
     width: 100%;
     padding: 10px;
@@ -24,21 +16,10 @@
     border: 1px solid #ccc;
 }
 
-/* Form submit button */
-.edit-form input[type="submit"] {
-    background-color: #007bff;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-}
-
-.edit-form input[type="submit"]:hover {
-    background-color: #0056b3;
-}
-
-/* Form error messages */
-.edit-form .error-message {
-    color: red;
-    margin-bottom: 10px;
+.edit-form select{
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }

@@ -38,7 +38,7 @@
                     {% if summer_match.winner %}
                         <td>{{ summer_match.winner.name}}</td>
                     {% else %}
-                        <td>ONGOING!!!</td>
+                        <td>DRAW</td>
                     {% endif %}
                     <td>
                         <a class="rounded-button" href="{{ path('app_summer_match_edit', {'id': summer_match.id}) }}">edit</a>

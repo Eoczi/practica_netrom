@@ -9,15 +9,6 @@ body {
     font-family: 'Fira Sans', sans-serif;
 }
 
-.centered-div {
-    width: 50%;
-    height: 50%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
 .nav {
     background-color: darkgreen;
     padding: 15px;
