@@ -2,13 +2,19 @@
 
 {% block title %}Edit TeamsHaveMatches{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/buttons.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/edit_form.css') }}">
+{% endblock %}
+
 {% block body %}
-    <div class="centered-div">
-        <h1>Edit TeamsHaveMatches</h1>
+    <div class="content">
+        <h1>Edit data about this team</h1>
 
         {{ include('teams_have_matches/_form.html.twig', {'button_label': 'Update'}) }}
 
-        <a href="{{ path('app_teams_have_matches_index') }}">back to list</a>
+        <a class="rounded-button" href="{{ path('app_teams_have_matches_index') }}">Back</a>
 
         {{ include('teams_have_matches/_delete_form.html.twig') }}
     </div>
