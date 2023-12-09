@@ -16,7 +16,7 @@
     </head>
     <body>
         <nav class="nav">
-            <label class="logo"><a href="/">MyApp</a></label>
+            <label class="logo"><a href="/">CoManager</a></label>
             <ul class="nav-links">
                 <li><a>New competition</a></li>
                 <li><a href="{{ path('app_ranking_index') }}">Ranking</a></li>
@@ -24,6 +24,9 @@
                 <li><a href="{{ path('app_team_index') }}">Teams</a></li>
                 <li><a href="{{ path('app_teams_have_matches_index') }}">Matches</a></li>
             </ul>
+            {{ render(controller(
+                'App\\Controller\\SearchController::searchBar'
+            )) }}
         </nav>
         <div class="content-container">
             {% block body %}

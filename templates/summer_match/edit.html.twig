@@ -13,7 +13,6 @@
         <h1>
             Selected match is placed at the date
             {{ summer_match.startDate ? summer_match.startDate|date('Y-m-d') : '' }}
-            between
         </h1>
 
         {{ include('summer_match/_form.html.twig', {'button_label': 'Update'}) }}

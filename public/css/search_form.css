@@ -1,0 +1,14 @@
+
+.search-form {
+    display:flex;
+    flex-direction: column;
+}
+
+.search-form input[type="text"],
+.search-form input[type="number"],
+.search-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+}
