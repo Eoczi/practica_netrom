@@ -17,6 +17,10 @@ class SummerMatch
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\GreaterThanOrEqual(
+        value: new \DateTimeImmutable('now'),
+        message: 'The start date must be later than or equal to the current date.'
+    )]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $startDate = null;
 
