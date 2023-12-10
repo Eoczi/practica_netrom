@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Repository\RankingRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Dompdf\Dompdf;
@@ -13,10 +15,16 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 class RankingController extends AbstractController
 {
     #[Route('/', name: 'app_ranking_index', methods: ['GET'])]
-    public function index(RankingRepository $rankingRepository): Response
+    public function index(RankingRepository $rankingRepository, PaginatorInterface $paginator, Request $request): Response
     {
+        $query = $rankingRepository->getSortedResults();
+        $rankings = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            8
+        );
         return $this->render('ranking/index.html.twig', [
-            'rankings' => $rankingRepository->getSortedResults(),
+            'rankings' => $rankings,
         ]);
     }
 

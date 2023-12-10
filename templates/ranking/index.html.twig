@@ -50,6 +50,9 @@
                 </tbody>
             </table>
         {% endblock %}
+        <div class="navigation">
+            {{ knp_pagination_render(rankings) }}
+        </div>
         <a class="rounded-button" href="{{ path('app_ranking_pdf') }}">PDF</a>
     </div>
 {% endblock %}

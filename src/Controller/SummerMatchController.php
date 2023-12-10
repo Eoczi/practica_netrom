@@ -14,6 +14,7 @@ use App\Repository\SummerMatchRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,10 +24,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class SummerMatchController extends AbstractController
 {
     #[Route('/', name: 'app_summer_match_index', methods: ['GET'])]
-    public function index(SummerMatchRepository $summerMatchRepository): Response
+    public function index(SummerMatchRepository $summerMatchRepository, PaginatorInterface $paginator, Request $request): Response
     {
+        $query = $summerMatchRepository->findAll();
+        $matches = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            5
+        );
         return $this->render('summer_match/index.html.twig', [
-            'summer_matches' => $summerMatchRepository->findAll(),
+            'summer_matches' => $matches,
         ]);
     }
 
