@@ -3,7 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Ranking;
+use App\Entity\Team;
+use App\Entity\TeamsHaveMatches;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,9 +19,13 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class RankingRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Ranking::class);
+        $this->entityManager = $entityManager;
+
     }
 
     public function save(Ranking $entity, bool $flush = false): void
@@ -42,6 +49,18 @@ class RankingRepository extends ServiceEntityRepository
     public function getSortedResults(): array
     {
         return $this->findBy([],['maxPoints'=>'DESC']);
+    }
+
+    public function getGoals(): array
+    {
+        return $this->entityManager->createQueryBuilder()
+            ->select(' IDENTITY(thm.teamsHaveMatches) AS thm_id', 't.name', 'SUM(thm.goals) AS total') //
+            ->from('App\Entity\TeamsHaveMatches', 'thm')
+            ->groupBy('thm_id')
+            ->orderBy('total', 'DESC')
+            ->innerJoin(Team::class,'t','WITH','t.id = IDENTITY(thm.teamsHaveMatches) ')
+            ->getQuery()
+            ->getResult();
     }
 //    /**
 //     * @return Ranking[] Returns an array of Ranking objects

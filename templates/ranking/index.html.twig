@@ -5,9 +5,16 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('css/tables.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/buttons.css') }}">
 {% endblock %}
 
 {% block body %}
+    {{ parent() }}
+
+{% endblock %}
+
+{% block content %}
+    {{ parent() }}
     <div class="content">
         <h1>Ranking</h1>
         <br>
@@ -19,27 +26,30 @@
         </h4>
     </div>
     <div class="content">
-        <table class="content-table">
-            <thead>
-            <tr>
-                <th>Placement</th>
-                <th>TeamName</th>
-                <th>MaxPoints</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for ranking in rankings %}
+        {% block table %}
+            <table class="content-table">
+                <thead>
                 <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ ranking.team.name }}</td>
-                    <td>{{ ranking.maxPoints }}</td>
+                    <th>Placement</th>
+                    <th>TeamName</th>
+                    <th>Points</th>
                 </tr>
-            {% else %}
-                <tr>
-                    <td colspan="3">no records found</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for ranking in rankings %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ ranking.team.name }}</td>
+                        <td>{{ ranking.maxPoints }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">no records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endblock %}
+        <a class="rounded-button" href="{{ path('app_ranking_pdf') }}">PDF</a>
     </div>
 {% endblock %}
