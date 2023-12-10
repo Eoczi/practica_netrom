@@ -55,5 +55,8 @@
             {% endfor %}
             </tbody>
         </table>
+        <div class="navigation">
+            {{ knp_pagination_render(teams_have_matches) }}
+        </div>
     </div>
 {% endblock %}

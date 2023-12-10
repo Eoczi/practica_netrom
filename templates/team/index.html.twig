@@ -26,8 +26,8 @@
         <table class="content-table">
             <thead>
             <tr>
-                <th>Name</th>
-                <th>Players</th>
+                <th>{{ knp_pagination_sortable(teams, 'Name', 'name', {'style': 'color: aliceblue; text-decoration: none;'}) }}</th>
+                <th>{{ knp_pagination_sortable(teams, 'Players', 'nrPeople', {'style': 'color: aliceblue; text-decoration: none;'}) }}</th>
                 <th>Edit</th>
             </tr>
             </thead>
@@ -48,6 +48,12 @@
 
             </tbody>
         </table>
+        <div class="navigation">
+            {{ knp_pagination_render(teams) }}
+        </div>
+
         <a class="rounded-button" href="{{ path('app_team_new') }}">Create new</a>
     </div>
 {% endblock %}
+
+

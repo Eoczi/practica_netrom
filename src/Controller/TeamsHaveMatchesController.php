@@ -9,6 +9,7 @@ use App\Service\RankingService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,9 +19,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class TeamsHaveMatchesController extends AbstractController
 {
     #[Route('/', name: 'app_teams_have_matches_index', methods: ['GET'])]
-    public function index(TeamsHaveMatchesRepository $teamsHaveMatchesRepository, EntityManagerInterface $entityManager): Response
+    public function index(TeamsHaveMatchesRepository $teamsHaveMatchesRepository, EntityManagerInterface $entityManager, PaginatorInterface $paginator, Request $request): Response
     {
-        $allGroupMatches = $teamsHaveMatchesRepository->findAllGroupMatches($entityManager);
+        $query = $teamsHaveMatchesRepository->findAllGroupMatches($entityManager);
+        $allGroupMatches = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            5
+        );
         return $this->render('teams_have_matches/index.html.twig', [
             'teams_have_matches' => $allGroupMatches,
         ]);

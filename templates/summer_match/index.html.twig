@@ -27,8 +27,8 @@
         <table class="content-table">
             <thead>
             <tr>
-                <th>StartDate</th>
-                <th>Winner</th>
+                <th>{{ knp_pagination_sortable(summer_matches, 'Date', 'startDate', {'style': 'color: aliceblue; text-decoration: none;'}) }}</th>
+                <th>{{ knp_pagination_sortable(summer_matches, 'Winner', 'winner', {'style': 'color: aliceblue; text-decoration: none;'}) }}</th>
                 <th>Edit</th>
             </tr>
             </thead>
@@ -52,6 +52,9 @@
             {% endfor %}
             </tbody>
         </table>
+        <div class="navigation">
+            {{ knp_pagination_render(summer_matches) }}
+        </div>
         <a class="rounded-button" href="{{ path('app_summer_match_new') }}">Create new</a>
     </div>
 {% endblock %}
