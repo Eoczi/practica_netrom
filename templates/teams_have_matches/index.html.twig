@@ -31,6 +31,7 @@
                 <th>Score</th>
                 <th>Team2</th>
                 <th>Edit T2</th>
+                <th>Date</th>
             </tr>
             </thead>
             <tbody>
@@ -46,6 +47,9 @@
                     <td>{{ teamTeams[1] }}</td>
                     <td>
                         <a class="rounded-button" href="{{ path('app_teams_have_matches_edit', {'id': teamIDs[1] }) }}">edit</a>
+                    </td>
+                    <td>
+                        {{ teams_have_match.Date ? teams_have_match.Date | date('Y-m-d') : ''}}
                     </td>
                 </tr>
             {% else %}

@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\SummerMatch;
 use App\Entity\Team;
 use App\Entity\TeamsHaveMatches;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -48,8 +49,10 @@ class TeamsHaveMatchesRepository extends ServiceEntityRepository
             ->addSelect(' GROUP_CONCAT(thm.goals) AS Score')
             ->addSelect(' GROUP_CONCAT(thm.nrPoints) AS Points')
             ->addSelect(' GROUP_CONCAT(t.name) AS Teams')
+            ->addSelect('sm.startDate AS Date')
             ->from('App\Entity\TeamsHaveMatches', 'thm')
             ->innerJoin(Team::class,'t','WITH','t.id = thm.teamsHaveMatches ')
+            ->join(SummerMatch::class,'sm', 'WITH', 'sm.id = thm.matchesHaveTeams')
             ->groupBy('thm.matchesHaveTeams')
             ->getQuery()
             ->getResult();
