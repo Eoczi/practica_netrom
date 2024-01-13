@@ -51,7 +51,7 @@ class TeamsHaveMatchesRepository extends ServiceEntityRepository
             ->addSelect(' GROUP_CONCAT(t.name) AS Teams')
             ->addSelect('sm.startDate AS Date')
             ->from('App\Entity\TeamsHaveMatches', 'thm')
-            ->innerJoin(Team::class,'t','WITH','t.id = thm.teamsHaveMatches ')
+            ->leftJoin(Team::class,'t','WITH','t.id = thm.teamsHaveMatches ')
             ->join(SummerMatch::class,'sm', 'WITH', 'sm.id = thm.matchesHaveTeams')
             ->groupBy('thm.matchesHaveTeams')
             ->getQuery()
