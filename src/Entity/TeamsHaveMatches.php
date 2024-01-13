@@ -25,6 +25,7 @@ class TeamsHaveMatches
     private ?int $nrPoints = null;
 
     #[ORM\ManyToOne(inversedBy: 'teamsHaveMatches')]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Team $teamsHaveMatches = null;
 
     #[ORM\ManyToOne(inversedBy: 'teamsHaveMatches')]

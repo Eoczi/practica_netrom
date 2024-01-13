@@ -37,14 +37,30 @@
             <tbody>
             {% for teams_have_match in teams_have_matches %}
                 <tr>
-                    {% set teamTeams = teams_have_match.Teams|split(',') %}
+                    {% if teams_have_match.Teams is not null %}
+                        {% if "," in teams_have_match.Teams  %}
+                            {% set teamTeams = teams_have_match.Teams|split(',') %}
+                        {% else %}
+                            {% set teamTeams = [teams_have_match.Teams, null] %}
+                        {% endif %}
+                    {% else %}
+                        {% set teamTeams = [null, null] %}
+                    {% endif %}
                     {% set teamIDs = teams_have_match.IDs|split(',') %}
                     <td>
                         <a class="rounded-button" href="{{ path('app_teams_have_matches_edit', {'id': teamIDs[0] }) }}">edit</a>
                     </td>
-                    <td>{{ teamTeams[0] }}</td>
+                    {% if teamTeams[0] is not null %}
+                        <td>{{ teamTeams[0] }}</td>
+                    {% else %}
+                        <td>PICK TEAM</td>
+                    {% endif %}
                     <td>{{ teams_have_match.Score|split(',')|join('-') }}</td>
-                    <td>{{ teamTeams[1] }}</td>
+                    {% if teamTeams[1] is not null %}
+                        <td>{{ teamTeams[1] }}</td>
+                    {% else %}
+                        <td>PICK TEAM</td>
+                    {% endif %}
                     <td>
                         <a class="rounded-button" href="{{ path('app_teams_have_matches_edit', {'id': teamIDs[1] }) }}">edit</a>
                     </td>
