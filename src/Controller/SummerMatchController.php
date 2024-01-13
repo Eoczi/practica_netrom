@@ -51,11 +51,7 @@ class SummerMatchController extends AbstractController
             $teamsHaveMatches1->setMatchesHaveTeams($summerMatch);
             $teamsHaveMatches1->setNrPoints(1);
             $teamsHaveMatches1->setGoals(0);
-            //$firstTeam = $teamRepository->findOneBy([], ['id' => 'ASC']);
-            //if ($firstTeam)
-                //$teamsHaveMatches1->setTeamsHaveMatches($firstTeam);
-            //else
-                $teamsHaveMatches1->setTeamsHaveMatches(null);
+            $teamsHaveMatches1->setTeamsHaveMatches(null);
             $entityManager->persist($teamsHaveMatches1);
             $entityManager->flush();
 
@@ -63,11 +59,7 @@ class SummerMatchController extends AbstractController
             $teamsHaveMatches2->setMatchesHaveTeams($summerMatch);
             $teamsHaveMatches2->setNrPoints(1);
             $teamsHaveMatches2->setGoals(0);
-            //$lastTeam = $teamRepository->findOneBy([], ['id' => 'DESC']);
-            //if ($lastTeam)
-                //$teamsHaveMatches2->setTeamsHaveMatches($lastTeam);
-            //else
-                $teamsHaveMatches2->setTeamsHaveMatches(null);
+            $teamsHaveMatches2->setTeamsHaveMatches(null);
             $entityManager->persist($teamsHaveMatches2);
             $entityManager->flush();
 
