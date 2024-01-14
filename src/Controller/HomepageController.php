@@ -16,5 +16,4 @@ class HomepageController extends AbstractController
             'controller_name' => 'HomepageController',
         ]);
     }
-
 }

@@ -3,6 +3,10 @@
 namespace App\Controller;
 
 use App\Repository\RankingRepository;
+use App\Service\RankingService;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,9 +18,15 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 #[Route('/ranking')]
 class RankingController extends AbstractController
 {
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     #[Route('/', name: 'app_ranking_index', methods: ['GET'])]
-    public function index(RankingRepository $rankingRepository, PaginatorInterface $paginator, Request $request): Response
+    public function index(RankingRepository $rankingRepository, PaginatorInterface $paginator, Request $request, EntityManagerInterface $entityManager): Response
     {
+        $rankingService = new RankingService($entityManager);
+        $rankingService->updateRankings();
         $query = $rankingRepository->getSortedResults();
         $rankings = $paginator->paginate(
             $query,

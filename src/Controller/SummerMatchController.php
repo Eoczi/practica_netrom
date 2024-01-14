@@ -38,7 +38,7 @@ class SummerMatchController extends AbstractController
     }
 
     #[Route('/new', name: 'app_summer_match_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, SummerMatchRepository $summerMatchRepository, TeamRepository $teamRepository, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, SummerMatchRepository $summerMatchRepository, EntityManagerInterface $entityManager): Response
     {
         $summerMatch = new SummerMatch();
         $form = $this->createForm(SummerMatchType::class, $summerMatch);
@@ -72,29 +72,17 @@ class SummerMatchController extends AbstractController
         ]);
     }
 
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
     #[Route('/{id}/edit', name: 'app_summer_match_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, SummerMatch $summerMatch, SummerMatchRepository $summerMatchRepository, EntityManagerInterface $entityManager): Response
     {
-        $rankingService = new RankingService();
-        $summerMatchService = new SummerMatchService();
-        $form = $this->createForm(SummerMatchEditType::class, $summerMatch);
+
+        //$summerMatchService = new SummerMatchService($entityManager);
+        $form = $this->createForm(SummerMatchType::class, $summerMatch);
         $form->handleRequest($request);
-        /*if ($summerMatch->getWinner()?->getName())
-            $oldWinner = $summerMatch->getWinner()->getName();
-        else
-            $oldWinner = '';*/
 
         if ($form->isSubmitted() && $form->isValid()) {
             $summerMatchRepository->save($summerMatch, true);
-            /*$newSummerMatch = $summerMatchRepository->findOneBy(['id' => $summerMatch->getId()]);
-            $newWinner = $newSummerMatch->getWinner()->getName();*/
-            $rankingService->updateRankings($entityManager);
-            $summerMatchService->updatePoints($entityManager,$summerMatch);
-
+            //$summerMatchService->updatePoints($summerMatch);
 
             return $this->redirectToRoute('app_summer_match_index', [], Response::HTTP_SEE_OTHER);
         }
