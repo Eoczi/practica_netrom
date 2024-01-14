@@ -6,6 +6,7 @@ use App\Entity\TeamsHaveMatches;
 use App\Form\TeamsHaveMatchesType;
 use App\Repository\TeamsHaveMatchesRepository;
 use App\Service\RankingService;
+use App\Service\SummerMatchService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -32,25 +33,6 @@ class TeamsHaveMatchesController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_teams_have_matches_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, TeamsHaveMatchesRepository $teamsHaveMatchesRepository): Response
-    {
-        $teamsHaveMatch = new TeamsHaveMatches();
-        $form = $this->createForm(TeamsHaveMatchesType::class, $teamsHaveMatch);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $teamsHaveMatchesRepository->save($teamsHaveMatch, true);
-
-            return $this->redirectToRoute('app_teams_have_matches_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('teams_have_matches/new.html.twig', [
-            'teams_have_match' => $teamsHaveMatch,
-            'form' => $form,
-        ]);
-    }
-
     #[Route('/{id}', name: 'app_teams_have_matches_show', methods: ['GET'])]
     public function show(TeamsHaveMatches $teamsHaveMatch): Response
     {
@@ -66,14 +48,16 @@ class TeamsHaveMatchesController extends AbstractController
     #[Route('/{id}/edit', name: 'app_teams_have_matches_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, TeamsHaveMatches $teamsHaveMatch, TeamsHaveMatchesRepository $teamsHaveMatchesRepository, EntityManagerInterface $entityManager): Response
     {
-        $rankingService = new RankingService();
+        $summerMatchService = new SummerMatchService($entityManager);
+        $rankingService = new RankingService($entityManager);
         $form = $this->createForm(TeamsHaveMatchesType::class, $teamsHaveMatch);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $teamsHaveMatchesRepository->save($teamsHaveMatch, true);
+            $rankingService->updateRankings();
+            $summerMatchService->updatePoints($teamsHaveMatch->getMatchesHaveTeams());
 
-            $rankingService->updateRankings($entityManager);
             return $this->redirectToRoute('app_teams_have_matches_index', [], Response::HTTP_SEE_OTHER);
         }
 
