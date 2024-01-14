@@ -25,6 +25,8 @@ class RankingController extends AbstractController
     #[Route('/', name: 'app_ranking_index', methods: ['GET'])]
     public function index(RankingRepository $rankingRepository, PaginatorInterface $paginator, Request $request, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted ( attribute: "IS_AUTHENTICATED_FULLY");
+        $user = $this->getUser();
         $rankingService = new RankingService($entityManager);
         $rankingService->updateRankings();
         $query = $rankingRepository->getSortedResults();
@@ -33,9 +35,10 @@ class RankingController extends AbstractController
             $request->query->getInt('page', 1),
             8
         );
-        return $this->render('ranking/index.html.twig', [
-            'rankings' => $rankings,
-        ]);
+        return match ($user->isVerified()) {
+            true => $this->render('ranking/index.html.twig', ['rankings' => $rankings,]),
+            false => $this->render("security/verify_email.html.twig"),
+        };
     }
 
 

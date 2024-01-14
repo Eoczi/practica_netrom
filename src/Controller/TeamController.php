@@ -19,15 +19,19 @@ class TeamController extends AbstractController
     #[Route('/', name: 'app_team_index', methods: ['GET'])]
     public function index(TeamRepository $teamRepository, PaginatorInterface $paginator, Request $request): Response
     {
+
+        $this->denyAccessUnlessGranted ( attribute: "IS_AUTHENTICATED_FULLY");
+        $user = $this->getUser();
         $query = $teamRepository->findAll();
         $teams = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
             5
         );
-        return $this->render('team/index.html.twig', [
-            'teams' => $teams,
-        ]);
+        return match ($user->isVerified()) {
+            true => $this->render('team/index.html.twig', ['teams' => $teams,]),
+            false => $this->render("security/verify_email.html.twig"),
+        };
     }
 
     #[Route('/new', name: 'app_team_new', methods: ['GET', 'POST'])]

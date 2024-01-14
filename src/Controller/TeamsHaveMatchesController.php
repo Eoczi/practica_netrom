@@ -22,15 +22,18 @@ class TeamsHaveMatchesController extends AbstractController
     #[Route('/', name: 'app_teams_have_matches_index', methods: ['GET'])]
     public function index(TeamsHaveMatchesRepository $teamsHaveMatchesRepository, EntityManagerInterface $entityManager, PaginatorInterface $paginator, Request $request): Response
     {
+        $this->denyAccessUnlessGranted ( attribute: "IS_AUTHENTICATED_FULLY");
+        $user = $this->getUser();
         $query = $teamsHaveMatchesRepository->findAllGroupMatches($entityManager);
         $allGroupMatches = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
             5
         );
-        return $this->render('teams_have_matches/index.html.twig', [
-            'teams_have_matches' => $allGroupMatches,
-        ]);
+        return match ($user->isVerified()) {
+            true => $this->render('teams_have_matches/index.html.twig', ['teams_have_matches' => $allGroupMatches,]),
+            false => $this->render("security/verify_email.html.twig"),
+        };
     }
 
     #[Route('/{id}', name: 'app_teams_have_matches_show', methods: ['GET'])]
