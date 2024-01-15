@@ -42,10 +42,15 @@ class Team
     #[ORM\OneToOne(mappedBy: 'team', cascade: ['persist', 'remove'])]
     private ?Ranking $ranking = null;
 
-    public function __construct()
+    #[ORM\ManyToOne(inversedBy: 'teams')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user;
+
+    public function __construct(User $user)
     {
         $this->teamsHaveMatches = new ArrayCollection();
         $this->summerMatches = new ArrayCollection();
+        $this->user = $user;
     }
 
     public function getId(): ?int
@@ -163,4 +168,8 @@ class Team
         return $this;
     }
 
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
 }

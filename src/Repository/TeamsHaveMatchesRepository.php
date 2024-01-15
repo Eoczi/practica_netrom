@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\SummerMatch;
 use App\Entity\Team;
 use App\Entity\TeamsHaveMatches;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,9 +20,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class TeamsHaveMatchesRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, TeamsHaveMatches::class);
+        $this->entityManager = $entityManager;
     }
 
     public function save(TeamsHaveMatches $entity, bool $flush = false): void
@@ -42,9 +44,9 @@ class TeamsHaveMatchesRepository extends ServiceEntityRepository
         }
     }
 
-    public function findAllGroupMatches (EntityManagerInterface $entityManager) :array
+    public function findAllGroupMatches (User $user) :array
     {
-        return $entityManager->createQueryBuilder()
+        return $this->entityManager->createQueryBuilder()
             ->select('GROUP_CONCAT(thm.id) as IDs')
             ->addSelect(' GROUP_CONCAT(thm.goals) AS Score')
             ->addSelect(' GROUP_CONCAT(thm.nrPoints) AS Points')
@@ -54,6 +56,8 @@ class TeamsHaveMatchesRepository extends ServiceEntityRepository
             ->leftJoin(Team::class,'t','WITH','t.id = thm.teamsHaveMatches ')
             ->join(SummerMatch::class,'sm', 'WITH', 'sm.id = thm.matchesHaveTeams')
             ->groupBy('thm.matchesHaveTeams')
+            ->where('sm.user = :userId')
+            ->setParameter('userId', $user->getId())
             ->getQuery()
             ->getResult();
     }

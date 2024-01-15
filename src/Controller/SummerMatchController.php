@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\SummerMatch;
 use App\Entity\TeamsHaveMatches;
+use App\Entity\User;
 use App\Form\SummerMatchType;
 use App\Repository\SummerMatchRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,11 +18,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class SummerMatchController extends AbstractController
 {
     #[Route('/', name: 'app_summer_match_index', methods: ['GET'])]
-    public function index(SummerMatchRepository $summerMatchRepository, PaginatorInterface $paginator, Request $request): Response
+    public function index(SummerMatchRepository $summerMatchRepository, PaginatorInterface $paginator, Request $request, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted ( attribute: "IS_AUTHENTICATED_FULLY");
         $user = $this->getUser();
-        $query = $summerMatchRepository->findAll();
+        $userEntity = $entityManager->getRepository(User::class)->findOneBy(['email' => $user->getUserIdentifier()]);
+        $query = $summerMatchRepository->findBy(['user' => $userEntity]);
         $matches = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
@@ -36,7 +38,9 @@ class SummerMatchController extends AbstractController
     #[Route('/new', name: 'app_summer_match_new', methods: ['GET', 'POST'])]
     public function new(Request $request, SummerMatchRepository $summerMatchRepository, EntityManagerInterface $entityManager): Response
     {
-        $summerMatch = new SummerMatch();
+        $userRepository = $entityManager->getRepository(User::class);
+        $user = $userRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
+        $summerMatch = new SummerMatch($user);
         $form = $this->createForm(SummerMatchType::class, $summerMatch);
         $form->handleRequest($request);
 

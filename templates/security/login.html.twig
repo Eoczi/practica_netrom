@@ -23,25 +23,18 @@
                 </div>
             {% endif %}
 
-            <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+            <h1 class="h3 mb-3 font-weight-normal">Please log in</h1>
             <br>
             <label for="inputEmail">Email</label>
             <br>
             <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
-            <br>
-            <br>
+            <br><br>
             <label for="inputPassword">Password</label>
             <br>
             <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-
-            <input type="hidden" name="_csrf_token"
-                   value="{{ csrf_token('authenticate') }}"
-            >
-            <br>
-            <br>
-            <button class="rounded-button" type="submit">
-                Sign in
-            </button>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            <br><br>
+            <button class="rounded-button" type="submit">Log in</button>
         </form>
         <p>Don't have an account?<a href="{{ path('app_register') }}">Register</a></p>
     </div>

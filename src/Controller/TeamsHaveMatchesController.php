@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\TeamsHaveMatches;
+use App\Entity\User;
 use App\Form\TeamsHaveMatchesType;
 use App\Repository\TeamsHaveMatchesRepository;
 use App\Service\RankingService;
@@ -24,7 +25,8 @@ class TeamsHaveMatchesController extends AbstractController
     {
         $this->denyAccessUnlessGranted ( attribute: "IS_AUTHENTICATED_FULLY");
         $user = $this->getUser();
-        $query = $teamsHaveMatchesRepository->findAllGroupMatches($entityManager);
+        $userEntity = $entityManager->getRepository(User::class)->findOneBy(['email' => $user->getUserIdentifier()]);
+        $query = $teamsHaveMatchesRepository->findAllGroupMatches($userEntity);
         $allGroupMatches = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
@@ -36,14 +38,6 @@ class TeamsHaveMatchesController extends AbstractController
         };
     }
 
-    #[Route('/{id}', name: 'app_teams_have_matches_show', methods: ['GET'])]
-    public function show(TeamsHaveMatches $teamsHaveMatch): Response
-    {
-        return $this->render('teams_have_matches/show.html.twig', [
-            'teams_have_match' => $teamsHaveMatch,
-        ]);
-    }
-
     /**
      * @throws NonUniqueResultException
      * @throws NoResultException
@@ -53,6 +47,8 @@ class TeamsHaveMatchesController extends AbstractController
     {
         $summerMatchService = new SummerMatchService($entityManager);
         $rankingService = new RankingService($entityManager);
+        //$user = $this->getUser();
+        //$userEntity = $entityManager->getRepository(User::class)->findOneBy(['email' => $user->getUserIdentifier()]);
         $form = $this->createForm(TeamsHaveMatchesType::class, $teamsHaveMatch);
         $form->handleRequest($request);
 

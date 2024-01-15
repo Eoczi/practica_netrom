@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Repository\RankingRepository;
 use App\Service\RankingService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,9 +28,10 @@ class RankingController extends AbstractController
     {
         $this->denyAccessUnlessGranted ( attribute: "IS_AUTHENTICATED_FULLY");
         $user = $this->getUser();
+        $userEntity = $entityManager->getRepository(User::class)->findOneBy(['email' => $user->getUserIdentifier()]);
         $rankingService = new RankingService($entityManager);
+        $query = $rankingRepository->getSortedResults($userEntity);
         $rankingService->updateRankings();
-        $query = $rankingRepository->getSortedResults();
         $rankings = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
@@ -43,11 +45,12 @@ class RankingController extends AbstractController
 
 
     #[Route('/pdf', name: 'app_ranking_pdf')]
-    public function generatePdf(RankingRepository $rankingRepository): Response
+    public function generatePdf(RankingRepository $rankingRepository, EntityManagerInterface $entityManager): Response
     {
-
+        $user = $this->getUser();
+        $userEntity = $entityManager->getRepository(User::class)->findOneBy(['email' => $user->getUserIdentifier()]);
         $html =  $this->renderView('ranking/table.html.twig', [
-            'rankings' => $rankingRepository->getSortedResults(),
+            'rankings' => $rankingRepository->getSortedResults($userEntity),
             'teamsGoals' => $rankingRepository->getGoals(),
         ]);
 

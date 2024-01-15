@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -31,6 +33,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
+
+    #[ORM\OneToMany(mappedBy: 'userId', targetEntity: Team::class)]
+    private Collection $teams;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: SummerMatch::class)]
+    private Collection $summerMatches;
+
+    public function __construct()
+    {
+        $this->teams = new ArrayCollection();
+        $this->summerMatches = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -110,6 +124,44 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Team>
+     */
+    public function getTeams(): Collection
+    {
+        return $this->teams;
+    }
+
+    /**
+     * @return Collection<int, SummerMatch>
+     */
+    public function getSummerMatches(): Collection
+    {
+        return $this->summerMatches;
+    }
+
+    public function addSummerMatch(SummerMatch $summerMatch): static
+    {
+        if (!$this->summerMatches->contains($summerMatch)) {
+            $this->summerMatches->add($summerMatch);
+            $summerMatch->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSummerMatch(SummerMatch $summerMatch): static
+    {
+        if ($this->summerMatches->removeElement($summerMatch)) {
+            // set the owning side to null (unless already changed)
+            if ($summerMatch->getUser() === $this) {
+                $summerMatch->setUser(null);
+            }
+        }
 
         return $this;
     }

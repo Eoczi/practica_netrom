@@ -16,12 +16,6 @@ class SummerMatchService
         $teamsHaveMatchesRepository = $this->entityManager->getRepository(TeamsHaveMatches::class);
         $summerMatchID = $summerMatch->getId();
         $matches= $teamsHaveMatchesRepository->findBy(['matchesHaveTeams' => $summerMatchID]);
-        /*foreach($matches as $match){
-            if ($summerMatch->getWinner()->getName() == $match->getTeamsHaveMatches()->getName())
-                $match->setNrPoints(3);
-            else
-                $match->setNrPoints(0);
-        }*/
         if ($matches[0]->getGoals() > $matches[1]->getGoals())
         {
             $matches[0]->setNrPoints(3);
