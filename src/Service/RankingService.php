@@ -35,20 +35,8 @@ class RankingService
                 ->setParameter('teamID', $teamID)
                 ->getQuery()
                 ->getSingleScalarResult();
-            //is_null($totalPoints) ? : $totalPoints = 0;
             $ranking = $rankingRepository->findOneBy(['team' => $teamID]);
             $ranking->setMaxPoints($totalPoints);
-            //$finalTotalPoints = 0;
-            //is_null($totalPoints) ? : $finalTotalPoints = $totalPoints;
-
-            /*if ($ranking) {
-                $ranking->setMaxPoints($finalTotalPoints);
-            } else {
-                $ranking = new Ranking();
-                $ranking->setTeam($team);
-                $ranking->setMaxPoints($finalTotalPoints);
-                $entityManager->persist($ranking);
-            }*/
         }
         $this->entityManager->flush();
     }

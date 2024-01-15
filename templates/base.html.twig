@@ -16,7 +16,6 @@
     </head>
     {% block body %}
     <body>
-
         <nav class="nav">
             <label class="logo"><a href={{ path('app_homepage_index') }}>CoManager</a></label>
             <ul class="nav-links">
@@ -25,6 +24,15 @@
                 <li><a href="{{ path('app_summer_match_index') }}">Match dates</a></li>
                 <li><a href="{{ path('app_teams_have_matches_index') }}">Matches</a></li>
             </ul>
+            <div>
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <p style="color:white;">Email: {{ app.user.email }}</p>
+                    <p><a href="{{ path('app_logout') }}" style="text-decoration: none; color:white;">Log out</a></p>
+                {% else %}
+                    <p><a href="{{ path('app_login') }}" style="text-decoration: none; color:white;">Log in</a></p>
+                    <p><a href="{{ path('app_register') }}" style="text-decoration: none; color:white;">Register</a></p>
+                {% endif %}
+            </div>
         </nav>
         <div class="content-container">
             {% block content %}

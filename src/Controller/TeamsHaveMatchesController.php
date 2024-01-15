@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\TeamsHaveMatches;
+use App\Entity\User;
 use App\Form\TeamsHaveMatchesType;
 use App\Repository\TeamsHaveMatchesRepository;
 use App\Service\RankingService;
@@ -22,23 +23,19 @@ class TeamsHaveMatchesController extends AbstractController
     #[Route('/', name: 'app_teams_have_matches_index', methods: ['GET'])]
     public function index(TeamsHaveMatchesRepository $teamsHaveMatchesRepository, EntityManagerInterface $entityManager, PaginatorInterface $paginator, Request $request): Response
     {
-        $query = $teamsHaveMatchesRepository->findAllGroupMatches($entityManager);
+        $this->denyAccessUnlessGranted ( attribute: "IS_AUTHENTICATED_FULLY");
+        $user = $this->getUser();
+        $userEntity = $entityManager->getRepository(User::class)->findOneBy(['email' => $user->getUserIdentifier()]);
+        $query = $teamsHaveMatchesRepository->findAllGroupMatches($userEntity);
         $allGroupMatches = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
             5
         );
-        return $this->render('teams_have_matches/index.html.twig', [
-            'teams_have_matches' => $allGroupMatches,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'app_teams_have_matches_show', methods: ['GET'])]
-    public function show(TeamsHaveMatches $teamsHaveMatch): Response
-    {
-        return $this->render('teams_have_matches/show.html.twig', [
-            'teams_have_match' => $teamsHaveMatch,
-        ]);
+        return match ($user->isVerified()) {
+            true => $this->render('teams_have_matches/index.html.twig', ['teams_have_matches' => $allGroupMatches,]),
+            false => $this->render("security/verify_email.html.twig"),
+        };
     }
 
     /**
@@ -50,6 +47,8 @@ class TeamsHaveMatchesController extends AbstractController
     {
         $summerMatchService = new SummerMatchService($entityManager);
         $rankingService = new RankingService($entityManager);
+        //$user = $this->getUser();
+        //$userEntity = $entityManager->getRepository(User::class)->findOneBy(['email' => $user->getUserIdentifier()]);
         $form = $this->createForm(TeamsHaveMatchesType::class, $teamsHaveMatch);
         $form->handleRequest($request);
 

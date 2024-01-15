@@ -2,18 +2,12 @@
 
 namespace App\Controller;
 
-use App\Repository\TeamRepository;
-use App\Service\RankingService;
-use App\Service\SummerMatchService;
 use App\Entity\SummerMatch;
-use App\Entity\Team;
 use App\Entity\TeamsHaveMatches;
-use App\Form\SummerMatchEditType;
+use App\Entity\User;
 use App\Form\SummerMatchType;
 use App\Repository\SummerMatchRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,23 +18,29 @@ use Symfony\Component\Routing\Annotation\Route;
 class SummerMatchController extends AbstractController
 {
     #[Route('/', name: 'app_summer_match_index', methods: ['GET'])]
-    public function index(SummerMatchRepository $summerMatchRepository, PaginatorInterface $paginator, Request $request): Response
+    public function index(SummerMatchRepository $summerMatchRepository, PaginatorInterface $paginator, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $query = $summerMatchRepository->findAll();
+        $this->denyAccessUnlessGranted ( attribute: "IS_AUTHENTICATED_FULLY");
+        $user = $this->getUser();
+        $userEntity = $entityManager->getRepository(User::class)->findOneBy(['email' => $user->getUserIdentifier()]);
+        $query = $summerMatchRepository->findBy(['user' => $userEntity]);
         $matches = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
             5
         );
-        return $this->render('summer_match/index.html.twig', [
-            'summer_matches' => $matches,
-        ]);
+        return match ($user->isVerified()) {
+            true => $this->render('summer_match/index.html.twig', ['summer_matches' => $matches]),
+            false => $this->render("security/verify_email.html.twig"),
+        };
     }
 
     #[Route('/new', name: 'app_summer_match_new', methods: ['GET', 'POST'])]
     public function new(Request $request, SummerMatchRepository $summerMatchRepository, EntityManagerInterface $entityManager): Response
     {
-        $summerMatch = new SummerMatch();
+        $userRepository = $entityManager->getRepository(User::class);
+        $user = $userRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
+        $summerMatch = new SummerMatch($user);
         $form = $this->createForm(SummerMatchType::class, $summerMatch);
         $form->handleRequest($request);
 
@@ -75,14 +75,11 @@ class SummerMatchController extends AbstractController
     #[Route('/{id}/edit', name: 'app_summer_match_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, SummerMatch $summerMatch, SummerMatchRepository $summerMatchRepository, EntityManagerInterface $entityManager): Response
     {
-
-        //$summerMatchService = new SummerMatchService($entityManager);
         $form = $this->createForm(SummerMatchType::class, $summerMatch);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $summerMatchRepository->save($summerMatch, true);
-            //$summerMatchService->updatePoints($summerMatch);
 
             return $this->redirectToRoute('app_summer_match_index', [], Response::HTTP_SEE_OTHER);
         }

@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Ranking;
 use App\Entity\Team;
-use App\Entity\TeamsHaveMatches;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -46,9 +46,17 @@ class RankingRepository extends ServiceEntityRepository
         }
     }
 
-    public function getSortedResults(): array
+    public function getSortedResults(User $user): array
     {
-        return $this->findBy([],['maxPoints'=>'DESC']);
+        return $this->entityManager->createQueryBuilder()
+            ->select('r')
+            ->from('App\Entity\Ranking', 'r')
+            ->leftJoin(Team::class,'t','WITH','t.id = r.team ')
+            ->where('t.user = :userId')
+            ->setParameter('userId', $user->getId())
+            ->orderBy('r.maxPoints', 'DESC')
+            ->getQuery()
+            ->getResult();
     }
 
     public function getGoals(): array

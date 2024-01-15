@@ -31,9 +31,14 @@ class SummerMatch
     #[ORM\JoinColumn(nullable: true)]
     private ?Team $winner = null;
 
-    public function __construct()
+    #[ORM\ManyToOne(inversedBy: 'summerMatches')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user;
+
+    public function __construct(User $user)
     {
         $this->teamsHaveMatches = new ArrayCollection();
+        $this->user= $user;
     }
 
     public function getId(): ?int
@@ -97,5 +102,17 @@ class SummerMatch
     public function __toString(): string
     {
         return $this->getWinner() ? (string) $this->getWinner() : '';
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }

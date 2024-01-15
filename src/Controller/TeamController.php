@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Ranking;
 use App\Entity\Team;
+use App\Entity\User;
 use App\Form\TeamType;
 use App\Repository\TeamRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,23 +18,29 @@ use Symfony\Component\Routing\Annotation\Route;
 class TeamController extends AbstractController
 {
     #[Route('/', name: 'app_team_index', methods: ['GET'])]
-    public function index(TeamRepository $teamRepository, PaginatorInterface $paginator, Request $request): Response
+    public function index(TeamRepository $teamRepository, PaginatorInterface $paginator, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $query = $teamRepository->findAll();
+        $this->denyAccessUnlessGranted ( attribute: "IS_AUTHENTICATED_FULLY");
+        $user = $this->getUser();
+        $userEntity = $entityManager->getRepository(User::class)->findOneBy(['email' => $user->getUserIdentifier()]);
+        $query = $teamRepository->findBy(['user' => $userEntity]);
         $teams = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
             5
         );
-        return $this->render('team/index.html.twig', [
-            'teams' => $teams,
-        ]);
+        return match ($user->isVerified()) {
+            true => $this->render('team/index.html.twig', ['teams' => $teams,]),
+            false => $this->render("security/verify_email.html.twig"),
+        };
     }
 
     #[Route('/new', name: 'app_team_new', methods: ['GET', 'POST'])]
     public function new(Request $request, TeamRepository $teamRepository,EntityManagerInterface $entityManager): Response
     {
-        $team = new Team();
+        $userRepository = $entityManager->getRepository(User::class);
+        $user = $userRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
+        $team = new Team($user);
         $form = $this->createForm(TeamType::class, $team);
         $form->handleRequest($request);
 
