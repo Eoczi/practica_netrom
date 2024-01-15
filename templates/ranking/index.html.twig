@@ -36,11 +36,17 @@
                 </tr>
                 </thead>
                 <tbody>
+                {% set points = 0 %}
                 {% for ranking in rankings %}
                     <tr>
+                        {% if ranking.maxPoints != points %}
                         <td>{{ loop.index }}</td>
+                        {% else %}
+                            <td> </td>
+                        {% endif %}
                         <td>{{ ranking.team.name }}</td>
                         <td>{{ ranking.maxPoints }}</td>
+                        {% set points = ranking.maxPoints %}
                     </tr>
                 {% else %}
                     <tr>
